@@ -9,7 +9,7 @@ pipeline {
         // Checkout code from the repository
         stage('Checkout') {
             steps {
-                // This step checks out the code from SCM (Git in this case)
+               git 'https://github.com/irisguillermo/Lab2_DevOps.git'
                 checkout scm
             }
         }
@@ -59,3 +59,28 @@ pipeline {
         }
     }
 }
+stage('Docker Login') {
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+            }
+        }
+    }
+}
+stage('Docker Build') {
+    steps {
+        script {
+            sh 'docker build -t kirisg/lab3image:latest .'
+        }
+    }
+}
+stage('Docker Push') {
+    steps {
+        script {
+            sh 'docker pushkirisg/lab3image:latest'
+        }
+    }
+}
+
+
